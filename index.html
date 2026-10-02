@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Discord フォーラム概要自動投稿ツール</title>
-  <link rel="stylesheet" href="discord_forum_app_test33.css">
+  <link rel="stylesheet" href="discord_forum_app_test35.css">
 </head>
 <body>
 
@@ -15,8 +15,8 @@
       <span id="sync-status" style="font-size: 0.8rem; color: var(--dc-text-muted);"></span>
       <button id="login-btn" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85rem; background-color: var(--dc-accent); color: white;">ログイン / 登録</button>
       <button id="logout-btn" class="btn btn-secondary btn-danger" style="display: none; padding: 6px 12px; font-size: 0.85rem;">ログアウト</button>
-      <button type="button" class="btn btn-secondary" data-on-click="resetForm()">🧹 フォーム初期化</button>
-      <button type="button" class="btn btn-secondary" data-on-click="resetInputs()" title="本文・画像・タグ・選択中のシナリオだけをクリアします（ブロックの並びやチャンネル選択はそのまま）">🧹 入力内容のみクリア</button>
+      <button type="button" class="btn btn-secondary" data-on-click="resetForm">🧹 フォーム初期化</button>
+      <button type="button" class="btn btn-secondary" data-on-click="resetInputs" title="本文・画像・タグ・選択中のシナリオだけをクリアします（ブロックの並びやチャンネル選択はそのまま）">🧹 入力内容のみクリア</button>
     </div>
   </div>
 
@@ -52,10 +52,10 @@
   </div>
 
 <div class="nav-tabs" role="tablist">
-  <button role="tab" aria-selected="true" class="tab-btn active" data-on-click="switchTab('postTab', event)">📝 投稿作成</button>
-  <button role="tab" aria-selected="false" class="tab-btn" data-on-click="switchTab('databaseTab', event)">📚 シナリオDB & ダッシュボード</button>
-  <button role="tab" aria-selected="false" class="tab-btn" data-on-click="switchTab('historyTab', event)">📜 投稿履歴</button>
-  <button role="tab" aria-selected="false" class="tab-btn" data-on-click="switchTab('settingsTab', event)">⚙️ 初期設定 & 記号設定</button>
+  <button role="tab" aria-selected="true" class="tab-btn active" data-on-click="switchTab-postTab-event">📝 投稿作成</button>
+  <button role="tab" aria-selected="false" class="tab-btn" data-on-click="switchTab-databaseTab-event">📚 シナリオDB & ダッシュボード</button>
+  <button role="tab" aria-selected="false" class="tab-btn" data-on-click="switchTab-historyTab-event">📜 投稿履歴</button>
+  <button role="tab" aria-selected="false" class="tab-btn" data-on-click="switchTab-settingsTab-event">⚙️ 初期設定 & 記号設定</button>
 </div>
 
 <!-- 1. 投稿作成画面 -->
@@ -70,14 +70,14 @@
           <div id="scenarioQuickResults" class="qs-results" role="listbox"></div>
         </div>
         <div class="grid-2">
-          <select id="dbScenarioSelect" data-on-change="loadScenarioFromDB(this.value)">
+          <select id="dbScenarioSelect" data-on-change="loadScenarioFromDB-this-value">
             <option value="">-- 保存済みシナリオを選択して自動入力 --</option>
           </select>
-          <button type="button" class="btn btn-secondary btn-success" data-on-click="saveCurrentToDB()">💾 入力中の内容をDBに保存/更新</button>
+          <button type="button" class="btn btn-secondary btn-success" data-on-click="saveCurrentToDB">💾 入力中の内容をDBに保存/更新</button>
         </div>
       </div>
 
-      <form id="postForm" data-on-submit="handlePost(event)">
+      <form id="postForm" data-on-submit="handlePost-event">
         <div class="card">
           <div class="card-title">📌 送信先チャンネル(複数選択可)</div>
           
@@ -94,11 +94,11 @@
           <div class="form-group" style="margin-top:14px; margin-bottom:0; border-top:1px dashed var(--dc-border); padding-top:12px;">
             <div style="display:flex; flex-direction:column; gap:8px;">
               <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; text-transform:none; color:var(--dc-text-normal);">
-                <input type="checkbox" id="verticalImageMode" data-on-change="renderPreview()" style="width:auto; cursor:pointer;" checked> 
+                <input type="checkbox" id="verticalImageMode" data-on-change="renderPreview" style="width:auto; cursor:pointer;" checked> 
                 📷 画像を縦並び（スタック表示）でアタッチする (推奨)
               </label>
               <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; text-transform:none; color:var(--dc-red);">
-                <input type="checkbox" id="noImageMode" data-on-change="renderPreview()" style="width:auto; cursor:pointer;"> 
+                <input type="checkbox" id="noImageMode" data-on-change="renderPreview" style="width:auto; cursor:pointer;"> 
                 🚫 画像を一切添付しない（テキストのみで投稿する）
               </label>
             </div>
@@ -112,12 +112,12 @@
         <div class="card">
           <div class="form-group" style="margin:0;">
             <label>フォーラムスレッドタイトル<span class="req">*</span></label>
-            <input type="text" id="title" placeholder="例: サンプルシナリオA" required data-on-input="checkDuplicateStatus(); renderPreview();">
+            <input type="text" id="title" placeholder="例: サンプルシナリオA" required data-on-input="checkDuplicateStatus-renderPreview">
           </div>
           
           <div class="form-group" style="margin-top:14px;">
             <label>ショップURL (任意)</label>
-            <input type="url" id="topShopUrl" placeholder="https://..." data-on-input="renderPreview()">
+            <input type="url" id="topShopUrl" placeholder="https://..." data-on-input="renderPreview">
           </div>
           
           <div class="form-group" style="margin-top:14px;">
@@ -125,7 +125,7 @@
               <span>あらすじ・キャッチコピー (見出し無し・ショップURLの後に表示)</span>
               <span style="display:inline-flex; align-items:center; gap:4px; font-weight:normal; text-transform:none;">
                 装飾スタイル:
-                <select id="topTrailerDecor" style="padding:4px; font-size:0.75rem; background:var(--dc-bg-primary); border:1px solid var(--dc-border); color:var(--dc-text-normal); border-radius:4px; outline:none;" data-on-change="renderPreview();">
+                <select id="topTrailerDecor" style="padding:4px; font-size:0.75rem; background:var(--dc-bg-primary); border:1px solid var(--dc-border); color:var(--dc-text-normal); border-radius:4px; outline:none;" data-on-change="renderPreview-2">
                   <option value="default">通常(引用)</option>
                   <option value="simple">シンプル</option>
                   <option value="fancy">ファンシー</option>
@@ -134,7 +134,7 @@
                 </select>
               </span>
             </label>
-            <textarea id="topTrailer" data-on-input="renderPreview()" placeholder="弱虫は、幸福をさえおそれるものです..."></textarea>
+            <textarea id="topTrailer" data-on-input="renderPreview" placeholder="弱虫は、幸福をさえおそれるものです..."></textarea>
           </div>
         </div>
 
@@ -142,12 +142,12 @@
           <div class="card-title">
             ↕️ 項目ブロック
             <div>
-              <button type="button" class="btn btn-secondary" data-on-click="toggleAllBlocks(false)">📂 全て開く</button>
-              <button type="button" class="btn btn-secondary" data-on-click="toggleAllBlocks(true)">📁 全て閉じる</button>
-              <button type="button" class="btn btn-secondary btn-warning" data-on-click="addSplitBlock()">✂️ 投稿分割</button>
-              <button type="button" class="btn btn-secondary btn-warning" data-on-click="autoSplitBlocks()">✂️ 自動分割</button>
-              <button type="button" class="btn btn-secondary" data-on-click="addImageBlock()">🖼️ 画像追加</button>
-              <button type="button" class="btn btn-secondary" data-on-click="addCustomBlock()">＋ 自由項目</button>
+              <button type="button" class="btn btn-secondary" data-on-click="toggleAllBlocks-false">📂 全て開く</button>
+              <button type="button" class="btn btn-secondary" data-on-click="toggleAllBlocks-true">📁 全て閉じる</button>
+              <button type="button" class="btn btn-secondary btn-warning" data-on-click="addSplitBlock">✂️ 投稿分割</button>
+              <button type="button" class="btn btn-secondary btn-warning" data-on-click="autoSplitBlocks">✂️ 自動分割</button>
+              <button type="button" class="btn btn-secondary" data-on-click="addImageBlock">🖼️ 画像追加</button>
+              <button type="button" class="btn btn-secondary" data-on-click="addCustomBlock">＋ 自由項目</button>
             </div>
           </div>
           <div style="font-size: 0.8rem; color: var(--dc-text-muted); margin-bottom: 12px; background: rgba(0,0,0,0.1); padding: 8px 12px; border-radius: 4px; text-align: center; border: 1px dashed var(--dc-border);">
@@ -155,9 +155,9 @@
             💡 このエリア内に画像ファイルをドラッグ＆ドロップすると画像ブロックが追加されます。
           </div>
           <div id="sortableBlockContainer" 
-               data-on-dragover="handleContainerDragOver(event)" 
-               data-on-dragleave="handleContainerDragLeave(event)" 
-               data-on-drop="handleContainerDrop(event)"
+               data-on-dragover="handleContainerDragOver-event" 
+               data-on-dragleave="handleContainerDragLeave-event" 
+               data-on-drop="handleContainerDrop-event"
                style="min-height: 50px; transition: 0.2s;">
           </div>
         </div>
@@ -165,7 +165,7 @@
         <div class="card">
           <div class="card-title">💬 自動追記返信 (スレッド作成直後の初速返信)</div>
           <div class="form-group">
-            <textarea id="autoReplyText" placeholder="例: 日程調整用URL: https://example.com/！" data-on-input="renderPreview()"></textarea>
+            <textarea id="autoReplyText" placeholder="例: 日程調整用URL: https://example.com/！" data-on-input="renderPreview"></textarea>
           </div>
         </div>
 
@@ -176,7 +176,7 @@
 
     <div class="preview-area">
       <div class="discord-preview-box">
-        <div class="discord-header" style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;"><span>👀 リアルタイム Discord プレビュー</span><button type="button" id="copyPostBtn" class="btn btn-secondary btn-xs" data-on-click="copyPostContent()">📋 投稿内容をコピー</button></div>
+        <div class="discord-header" style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;"><span>👀 リアルタイム Discord プレビュー</span><button type="button" id="copyPostBtn" class="btn btn-secondary btn-xs" data-on-click="copyPostContent">📋 投稿内容をコピー</button></div>
         
         <div class="discord-thread-title" id="pvThreadTitle">【スレッドタイトル】</div>
         <div class="discord-tags" id="pvTags"></div>
@@ -217,23 +217,23 @@
     <div class="card-title">
       📊 ダッシュボード集計 & フィルター・ソート
       <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-        <input type="text" id="dbSearchInput" placeholder="名前・システム・技能・備考・タグ等（スペースでAND）" title="全角/半角・ひらがな/カタカナの違いは無視して検索します" style="width:260px; padding:6px 10px;" data-on-input="debouncedDB()">
-        <select id="dbFilterStatus" style="width:130px; padding:6px;" data-on-change="renderDBView()">
+        <input type="text" id="dbSearchInput" placeholder="名前・システム・技能・備考・タグ等（スペースでAND）" title="全角/半角・ひらがな/カタカナの違いは無視して検索します" style="width:260px; padding:6px 10px;" data-on-input="debouncedDB">
+        <select id="dbFilterStatus" style="width:130px; padding:6px;" data-on-change="renderDBView">
           <option value="all">すべての状態</option>
           <option value="unposted">未投稿のみ</option>
           <option value="posted">投稿済みのみ</option>
           <option value="fav">★お気に入りのみ</option>
         </select>
-        <select id="dbFilterChannel" style="width:170px; padding:6px;" data-on-change="renderDBView()" title="チャンネル別に絞り込み"></select>
+        <select id="dbFilterChannel" style="width:170px; padding:6px;" data-on-change="renderDBView" title="チャンネル別に絞り込み"></select>
         <span id="dbResultCount" class="search-count"></span>
-        <select id="dbSortOrder" style="width:140px; padding:6px;" data-on-change="renderDBView()">
+        <select id="dbSortOrder" style="width:140px; padding:6px;" data-on-change="renderDBView">
           <option value="newest">登録順 (新しい順)</option>
           <option value="unposted_first">未投稿を優先</option>
           <option value="title">タイトル順 (あいうえお)</option>
         </select>
-        <label class="search-count" style="display:flex; align-items:center; gap:4px; cursor:pointer;" title="★を付けたシナリオを、どの並び順でも先頭に表示します"><input type="checkbox" id="dbFavFirst" style="width:auto;" checked data-on-change="try{localStorage.setItem('discord_forum_tool_db_favfirst', this.checked ? '1' : '0')}catch(e){} renderDBView()">★を先頭に</label>
-        <button class="btn btn-secondary" data-on-click="setDBViewMode('card')" id="btnViewCard">📇 カード</button>
-        <button class="btn btn-secondary" data-on-click="setDBViewMode('table')" id="btnViewTable">📋 テーブル</button>
+        <label class="search-count" style="display:flex; align-items:center; gap:4px; cursor:pointer;" title="★を付けたシナリオを、どの並び順でも先頭に表示します"><input type="checkbox" id="dbFavFirst" style="width:auto;" checked data-on-change="try-localStorage-setItem-discord_forum_t">★を先頭に</label>
+        <button class="btn btn-secondary" data-on-click="setDBViewMode-card" id="btnViewCard">📇 カード</button>
+        <button class="btn btn-secondary" data-on-click="setDBViewMode-table" id="btnViewTable">📋 テーブル</button>
       </div>
     </div>
     <div class="grid-3" style="text-align:center;">
@@ -254,7 +254,7 @@
   <div class="card">
     <div class="card-title">
       📚 シナリオライブラリ
-      <button class="btn btn-secondary btn-success" data-on-click="openAddScenarioModal()">＋ 新規シナリオ手動追加</button>
+      <button class="btn btn-secondary btn-success" data-on-click="openAddScenarioModal">＋ 新規シナリオ手動追加</button>
     </div>
     <div id="dbCardContainer" class="scenario-grid"></div>
     <div id="dbTableContainer" style="display:none; overflow-x:auto;">
@@ -275,8 +275,8 @@
 <!-- ダイレクト編集モーダル -->
 <div id="editScenarioModal" class="modal-overlay">
   <div class="modal-card">
-    <div class="card-title">✏️ シナリオ情報の直接編集<button type="button" class="btn-sort" data-on-click="closeEditScenarioModal()">✕</button></div>
-    <form data-on-submit="handleEditScenarioSubmit(event)">
+    <div class="card-title">✏️ シナリオ情報の直接編集<button type="button" class="btn-sort" data-on-click="closeEditScenarioModal">✕</button></div>
+    <form data-on-submit="handleEditScenarioSubmit-event">
       <input type="hidden" id="editIndex">
       <div class="form-group"><label>シナリオタイトル<span class="req">*</span></label><input type="text" id="eTitle" required></div>
       <div class="grid-2">
@@ -298,17 +298,17 @@
       </div>
       <div class="form-group">
         <label>サムネイル画像 (ドラッグ＆ドロップ または URL指定)</label>
-        <div class="drop-zone" id="eDropZone" data-on-click="document.getElementById('eFileInput').click()" data-on-dragover="handleDragOver(event)" data-on-dragleave="handleDragLeave(event)" data-on-drop="handleEditImageDrop(event)">
+        <div class="drop-zone" id="eDropZone" data-on-click="document-getElementById-eFileInput-click" data-on-dragover="handleDragOver-event" data-on-dragleave="handleDragLeave-event" data-on-drop="handleEditImageDrop-event">
           <span id="eDropText">📷 画像ファイルをここにドロップ または クリックして選択</span>
-          <input type="file" id="eFileInput" accept="image/*" style="display:none;" data-on-change="handleEditImageSelect(event)">
+          <input type="file" id="eFileInput" accept="image/*" style="display:none;" data-on-change="handleEditImageSelect-event">
         </div>
         <input type="text" id="eImageUrl" placeholder="https://... または画像をドロップ" style="margin-top:6px;">
-        <button type="button" class="btn btn-secondary btn-danger" data-on-click="clearEditScenarioImage()" style="margin-top:6px;">🗑️ 画像を削除</button>
+        <button type="button" class="btn btn-secondary btn-danger" data-on-click="clearEditScenarioImage" style="margin-top:6px;">🗑️ 画像を削除</button>
       </div>
       <div class="form-group"><label>あらすじ・トレーラー</label><textarea id="eTrailer"></textarea></div>
       <div class="form-group"><label>注意事項・備考</label><textarea id="eNotes"></textarea></div>
       <div class="actions-right">
-        <button type="button" class="btn btn-secondary btn-md" data-on-click="closeEditScenarioModal()">キャンセル</button>
+        <button type="button" class="btn btn-secondary btn-md" data-on-click="closeEditScenarioModal">キャンセル</button>
         <button type="submit" class="btn btn-success btn-md">💾 変更を保存</button>
       </div>
     </form>
@@ -318,8 +318,8 @@
 <!-- 新規シナリオ手動追加 モーダル -->
 <div id="addScenarioModal" class="modal-overlay">
   <div class="modal-card">
-    <div class="card-title">📝 新規シナリオ手動追加<button type="button" class="btn-sort" data-on-click="closeAddScenarioModal()">✕</button></div>
-    <form data-on-submit="handleManualAddScenario(event)">
+    <div class="card-title">📝 新規シナリオ手動追加<button type="button" class="btn-sort" data-on-click="closeAddScenarioModal">✕</button></div>
+    <form data-on-submit="handleManualAddScenario-event">
       <div class="form-group"><label>シナリオタイトル<span class="req">*</span></label><input type="text" id="mTitle" required placeholder="例: サンプルシナリオA"></div>
       <div class="grid-2">
         <div class="form-group"><label>システム</label><input type="text" id="mSystem" placeholder="例: システム名"></div>
@@ -340,16 +340,16 @@
       </div>
       <div class="form-group">
         <label>サムネイル画像 (ドラッグ＆ドロップ または URL指定)</label>
-        <div class="drop-zone" id="mDropZone" data-on-click="document.getElementById('mFileInput').click()" data-on-dragover="handleDragOver(event)" data-on-dragleave="handleDragLeave(event)" data-on-drop="handleManualImageDrop(event)">
+        <div class="drop-zone" id="mDropZone" data-on-click="document-getElementById-mFileInput-click" data-on-dragover="handleDragOver-event" data-on-dragleave="handleDragLeave-event" data-on-drop="handleManualImageDrop-event">
           <span id="mDropText">📷 画像ファイルをここにドロップ または クリックして選択</span>
-          <input type="file" id="mFileInput" accept="image/*" style="display:none;" data-on-change="handleManualImageSelect(event)">
+          <input type="file" id="mFileInput" accept="image/*" style="display:none;" data-on-change="handleManualImageSelect-event">
         </div>
         <input type="text" id="mImageUrl" placeholder="https://... または画像をドロップ" style="margin-top:6px;">
       </div>
       <div class="form-group"><label>あらすじ・トレーラー</label><textarea id="mTrailer" placeholder="あらすじ..."></textarea></div>
       <div class="form-group"><label>注意事項・備考</label><textarea id="mNotes" placeholder="注意事項..."></textarea></div>
       <div class="actions-right">
-        <button type="button" class="btn btn-secondary btn-md" data-on-click="closeAddScenarioModal()">キャンセル</button>
+        <button type="button" class="btn btn-secondary btn-md" data-on-click="closeAddScenarioModal">キャンセル</button>
         <button type="submit" class="btn btn-success btn-md">💾 データベースに登録</button>
       </div>
     </form>
@@ -359,10 +359,10 @@
 <!-- 3. 投稿履歴画面 -->
 <div id="historyTab" class="tab-content">
   <div class="card">
-    <div class="card-title">📜 過去の投稿ログ<button class="btn btn-secondary btn-danger" data-on-click="clearHistory()">ログ消去</button></div>
+    <div class="card-title">📜 過去の投稿ログ<button class="btn btn-secondary btn-danger" data-on-click="clearHistory">ログ消去</button></div>
     <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
-      <input type="text" id="historySearchInput" placeholder="🔍 日時・シナリオ名・チャンネル・タグで検索（スペースでAND）" style="flex:1; min-width:220px; padding:6px 10px;" data-on-input="renderHistoryTable()">
-      <button type="button" class="btn btn-secondary" data-on-click="document.getElementById('historySearchInput').value=''; renderHistoryTable();">クリア</button>
+      <input type="text" id="historySearchInput" placeholder="🔍 日時・シナリオ名・チャンネル・タグで検索（スペースでAND）" style="flex:1; min-width:220px; padding:6px 10px;" data-on-input="renderHistoryTable">
+      <button type="button" class="btn btn-secondary" data-on-click="document-getElementById-historySearchInp">クリア</button>
       <span id="historyResultCount" class="search-count"></span>
     </div>
     <table>
@@ -379,16 +379,16 @@
     <div class="grid-2">
       <div class="form-group">
         <label>Bot表示名</label>
-        <input type="text" id="botName" value="概要投稿Bot" data-on-input="appState.botName=this.value; saveState(true); renderPreview()">
+        <input type="text" id="botName" value="概要投稿Bot" data-on-input="appState-botName-this-value-saveState-tr">
       </div>
       <div class="form-group">
         <label>Botアイコン (画像をドラッグ＆ドロップで設定)</label>
-        <div class="drop-zone" data-on-click="document.getElementById('botAvatarInput').click()" data-on-dragover="handleDragOver(event)" data-on-dragleave="handleDragLeave(event)" data-on-drop="handleBotAvatarDrop(event)" style="padding:10px;">
+        <div class="drop-zone" data-on-click="document-getElementById-botAvatarInput-click" data-on-dragover="handleDragOver-event" data-on-dragleave="handleDragLeave-event" data-on-drop="handleBotAvatarDrop-event" style="padding:10px;">
           <span id="botAvatarDropText" style="font-size:0.85rem;">📷 画像をここにドロップ または クリック</span>
-          <input type="file" id="botAvatarInput" accept="image/*" style="display:none;" data-on-change="handleBotAvatarSelect(event)">
+          <input type="file" id="botAvatarInput" accept="image/*" style="display:none;" data-on-change="handleBotAvatarSelect-event">
           <img id="botAvatarPreview" class="image-preview-thumb" style="display:none; max-height:60px;">
         </div>
-        <button type="button" class="btn-sort btn-danger" style="margin-top:6px; display:none;" id="botAvatarClearBtn" data-on-click="clearBotAvatar()">🗑️ アイコンを解除</button>
+        <button type="button" class="btn-sort btn-danger" style="margin-top:6px; display:none;" id="botAvatarClearBtn" data-on-click="clearBotAvatar">🗑️ アイコンを解除</button>
         <div style="font-size:0.75rem; color:var(--dc-text-muted); margin-top:4px;">※投稿直前にWebhook自体のアイコンを上書き更新(PATCH)することでローカル画像を反映します（アイコンを解除すると、次の投稿時にWebhook側も初期アイコンへ戻します）。表示名は投稿ごとに指定するので、Webhookの名前は変更しません。</div>
       </div>
     </div>
@@ -397,22 +397,22 @@
   <div class="card">
     <div class="card-title">🎨 フォーマット・記号カスタマイズ</div>
     <div class="grid-3">
-      <div class="form-group"><label>通常(デフォルト): 見出し (h1)</label><input type="text" id="cfgH1" data-on-input="saveFormatConfig(); renderPreview();"></div>
+      <div class="form-group"><label>通常(デフォルト): 見出し (h1)</label><input type="text" id="cfgH1" data-on-input="saveFormatConfig-renderPreview"></div>
       <div class="form-group">
         <label>概要まとめ: 項目カッコ 前 / 後</label>
         <div style="display:flex; gap:4px;">
-          <input type="text" id="cfgSubPre" data-on-input="saveFormatConfig(); renderPreview();">
-          <input type="text" id="cfgSubPost" data-on-input="saveFormatConfig(); renderPreview();">
+          <input type="text" id="cfgSubPre" data-on-input="saveFormatConfig-renderPreview">
+          <input type="text" id="cfgSubPost" data-on-input="saveFormatConfig-renderPreview">
         </div>
       </div>
     </div>
     <div class="grid-3" style="margin-top:8px;">
-      <div class="form-group"><label>シンプル: 見出し</label><input type="text" id="cfgSimpleH1" data-on-input="saveFormatConfig(); renderPreview();"></div>
-      <div class="form-group"><label>シンプル: 箇条書き</label><input type="text" id="cfgSimpleList" data-on-input="saveFormatConfig(); renderPreview();"></div>
+      <div class="form-group"><label>シンプル: 見出し</label><input type="text" id="cfgSimpleH1" data-on-input="saveFormatConfig-renderPreview"></div>
+      <div class="form-group"><label>シンプル: 箇条書き</label><input type="text" id="cfgSimpleList" data-on-input="saveFormatConfig-renderPreview"></div>
     </div>
     <div class="grid-3" style="margin-top:8px;">
-      <div class="form-group"><label>ファンシー: 見出し</label><input type="text" id="cfgFancyH1" data-on-input="saveFormatConfig(); renderPreview();"></div>
-      <div class="form-group"><label>ファンシー: 箇条書き</label><input type="text" id="cfgFancyList" data-on-input="saveFormatConfig(); renderPreview();"></div>
+      <div class="form-group"><label>ファンシー: 見出し</label><input type="text" id="cfgFancyH1" data-on-input="saveFormatConfig-renderPreview"></div>
+      <div class="form-group"><label>ファンシー: 箇条書き</label><input type="text" id="cfgFancyList" data-on-input="saveFormatConfig-renderPreview"></div>
     </div>
   </div>
 
@@ -420,39 +420,39 @@
     <div class="card-title">🔗 投稿先フォーラム & タグIDマトリクス設定</div>
     <div style="font-size:0.75rem; color:var(--dc-text-muted); margin-bottom:10px; line-height:1.6;">※Webhook URLはクラウド同期にも含まれます。Firestoreのルールで「本人のみ読み書き可」になっていることを確認してください。入力欄は編集中以外は伏せ字で表示されます。</div>
     <div id="channelConfigList"></div>
-    <button type="button" class="btn btn-secondary" data-on-click="addChannelConfig()">＋ チャンネルを追加</button>
+    <button type="button" class="btn btn-secondary" data-on-click="addChannelConfig">＋ チャンネルを追加</button>
   </div>
 
   <div class="actions-right" style="margin-bottom:16px;">
-    <button type="button" class="btn btn-md" data-on-click="saveSettings()">💾 設定を保存する</button>
+    <button type="button" class="btn btn-md" data-on-click="saveSettings">💾 設定を保存する</button>
   </div>
 
   <div class="card">
     <div class="card-title">添付ファイルの上限</div>
     <p style="font-size:0.8rem; color:var(--dc-text-muted); margin:0 0 12px; line-height:1.6;">Discordの添付上限はサーバーのブースト状況で異なります。この値を超える画像は圧縮した画像で送り、1通の合計がこの値を超える場合は投稿前にお知らせします。</p>
-    <input type="number" id="maxAttachMB" min="1" max="500" step="0.5" value="9.5" style="width:120px;" data-on-input="saveMaxAttach(this.value)"> MB
+    <input type="number" id="maxAttachMB" min="1" max="500" step="0.5" value="9.5" style="width:120px;" data-on-input="saveMaxAttach-this-value"> MB
   </div>
   <div class="card" id="backupCard">
     <div class="card-title">📦 バックアップ（全データ インポート / エクスポート）</div>
     <p style="font-size:0.8rem; color:var(--dc-text-muted); margin:0 0 12px; line-height:1.6;">シナリオDB・投稿履歴・チャンネル設定・画像を、1つのJSONファイルにまとめて保存／復元します。復元すると現在のデータはファイルの内容で置き換わります（直前のデータは自動でバックアップされます）。<br>※ Webhook URLも含まれるため、ファイルは他人に共有しないでください。</p>
     <div class="actions-right" style="margin-top:0;">
-      <button type="button" class="btn btn-secondary btn-md" data-on-click="exportData()">💾 JSONに保存</button>
-      <button type="button" class="btn btn-secondary btn-md" data-on-click="document.getElementById('importFile').click()">📂 JSONから復元</button>
-      <input type="file" id="importFile" accept=".json" style="display:none;" data-on-change="importData(event)">
-      <button type="button" class="btn btn-secondary btn-md" data-on-click="exportPreV3Backup()">🕰 移行前データをJSONで書き出し</button>
+      <button type="button" class="btn btn-secondary btn-md" data-on-click="exportData">💾 JSONに保存</button>
+      <button type="button" class="btn btn-secondary btn-md" data-on-click="document-getElementById-importFile-click">📂 JSONから復元</button>
+      <input type="file" id="importFile" accept=".json" style="display:none;" data-on-change="importData-event">
+      <button type="button" class="btn btn-secondary btn-md" data-on-click="exportPreV3Backup">🕰 移行前データをJSONで書き出し</button>
     </div>
   </div>
 </div>
 
-<script src="app_test33_01_state_model.js"></script>
-<script src="app_test33_02_storage_images.js"></script>
-<script src="app_test33_03_ui_basics.js"></script>
-<script src="app_test33_04_forms_blocks.js"></script>
-<script src="app_test33_05_channels_save_sync.js"></script>
-<script src="app_test33_06_post.js"></script>
-<script src="app_test33_07_boot.js"></script>
-<script src="app_test33_08_events.js"></script>
-<script src="app_test33_09_actions.js"></script>
+<script src="app_test35_01_state_model.js"></script>
+<script src="app_test35_02_storage_images.js"></script>
+<script src="app_test35_03_ui_basics.js"></script>
+<script src="app_test35_04_forms_blocks.js"></script>
+<script src="app_test35_05_channels_save_sync.js"></script>
+<script src="app_test35_06_post.js"></script>
+<script src="app_test35_07_boot.js"></script>
+<script src="app_test35_08_events.js"></script>
+<script src="app_test35_09_actions.js"></script>
 
 
 <script type="module">
