@@ -1,9 +1,8 @@
-/* app_test35_06_post.js — Discordへの投稿処理
+/* app_test36_06_post.js — Discordへの投稿処理
  * 読み込み順は 01→07（HTMLの<script>の並び）。全ファイルが同じグローバルスコープを共有します。
  * 各ファイルは、前のファイルで定義された関数・変数を使えます。 */
-  async function handlePostInner(e) {
-    e.preventDefault();
-    const title = document.getElementById('title').value;
+  // 投稿処理は、段階ごとの小さな関数に分けてある（validateBeforePost → resolvePostTarget → syncWebhookAvatars → sendToSelectedChannels → showPostResult）
+  async function validateBeforePost(title) {   // 入力内容の検証。問題があればお知らせして false（中止）
     if (!title) return toast("タイトルを入力してください");
     if (title.length > 100) return toast("スレッドタイトルは100文字以内にしてください（現在 " + title.length + " 文字）");
     { const pc = buildPostData(); const over = pc.findIndex(c => finalText(c).length > 2000);
@@ -28,19 +27,17 @@
       if (missing.length && !(await appConfirm(`次のタグはIDが未設定（またはそのチャンネルに存在しない）ため付与されません:\n${missing.join('\n')}\n\nこのまま投稿しますか？`, { okText: '投稿する' }))) return;
     }
 
+    return true;
+  }
+  async function resolvePostTarget(title) {   // 同名シナリオの確認と重複投稿の確認。中止なら null、続行なら保存オプションを返す
     const saveOpts = await resolveSaveOpts(title);   // 同名シナリオの上書き確認は、投稿前に済ませておく
     { const dsc = saveOpts.forceNew ? null : findScenario(title);
       const dupNames = (dsc && dsc.postedChannels) ? selectedChannels().filter(c => dsc.postedChannels.includes(c.id)).map(c => c.name) : [];
-      if (dupNames.length && !(await appConfirm(`「${title}」は次のチャンネルに投稿済みです:\n${dupNames.join('、')}\n\nもう一度投稿すると重複スレッドになります。続けますか？`, { okText: '重複して投稿する', danger: true }))) return; }
+      if (dupNames.length && !(await appConfirm(`「${title}」は次のチャンネルに投稿済みです:\n${dupNames.join('、')}\n\nもう一度投稿すると重複スレッドになります。続けますか？`, { okText: '重複して投稿する', danger: true }))) return null; }
 
-    const btn = document.getElementById('submitBtn');
-    const statusMsg = document.getElementById('statusMsg');
-    btn.disabled = true;
-    btn.innerText = "⏳ 投稿中...";
-    statusMsg.style.display = "none";
-
-    const botName = document.getElementById('botName').value || "概要投稿Bot";
-
+    return saveOpts;
+  }
+  async function syncWebhookAvatars() {   // 選択中の各Webhookのアイコンを、設定どおりに更新（または解除）する
     for (const ch of selectedChannels()) {
       const avKey = 'discord_avatar_patched_' + hashStr(ch.webhookUrl || ''), avSig = hashStr(appState.botAvatarData || '');
       const wasPatched = localStorage.getItem(avKey);
@@ -52,6 +49,8 @@
       } catch (err) { console.error("Webhook PATCH failed:", err); }
     }
 
+  }
+  async function sendToSelectedChannels(title, botName) {   // 選択中の全チャンネルへ送信し、結果をまとめて返す
     const postChunks = buildPostData();
     const autoReply = document.getElementById('autoReplyText').value;
     const verticalImages = !!document.getElementById('verticalImageMode')?.checked;
@@ -70,9 +69,10 @@
       } else { failIds.push(ch.id); failNames.push(ch.name); if (r.unsure) uncertain.push(ch.name); }
     }
 
-    btn.disabled = false;
-    btn.innerText = "🚀 Discordフォーラムに投稿する";
-
+    return { okIds, okNames, failIds, failNames, partialNames, replyFailed, uncertain, threadMap, threadLinks };
+  }
+  function showPostResult(title, res, saveOpts) {   // 履歴・DBへの保存、失敗チャンネルの再選択、結果のポップアップ
+    const { okIds, okNames, failIds, failNames, partialNames, replyFailed, uncertain, threadMap, threadLinks } = res;
     if (okIds.length > 0) {
       const resultText = `✅ ${okIds.length}件のチャンネルに投稿成功` + (failNames.length ? ` ／ ⚠️ 失敗: ${failNames.join(', ')}（失敗したチャンネルだけ選択したままにしています）` : '')
         + (partialNames.length ? `\n⚠️ 途中で失敗（スレッドは作成済み）: ${partialNames.join(', ')}\n残りはDiscord上で手動追記してください。同じ内容を再投稿すると重複スレッドになります。` : '')
@@ -91,6 +91,29 @@
       const resultText = `❌ 投稿に失敗しました。Webhook URLなどを確認してください。` + (uncertain.length ? `\n⚠️ 応答がなかったチャンネル（${uncertain.join(', ')}）は、スレッドが作成されていないかDiscordで確認してから再投稿してください。` : '');
       appAlert(resultText, { title: '❌ 投稿に失敗しました', okText: '閉じる' });
     }
+  }
+  async function handlePostInner(e) {
+    e.preventDefault();
+    const title = document.getElementById('title').value;
+    if (!(await validateBeforePost(title))) return;
+    const saveOpts = await resolvePostTarget(title);
+    if (saveOpts === null) return;
+
+    const btn = document.getElementById('submitBtn');
+    const statusMsg = document.getElementById('statusMsg');
+    btn.disabled = true;
+    btn.innerText = "⏳ 投稿中...";
+    statusMsg.style.display = "none";
+
+    const botName = document.getElementById('botName').value || "概要投稿Bot";
+
+    await syncWebhookAvatars();
+    const res = await sendToSelectedChannels(title, botName);
+
+    btn.disabled = false;
+    btn.innerText = "🚀 Discordフォーラムに投稿する";
+
+    showPostResult(title, res, saveOpts);
   }
 
   // 1チャンネル分の送信（スレッド作成 → 2通目以降 → 自動返信）。成功/失敗の結果だけを返す

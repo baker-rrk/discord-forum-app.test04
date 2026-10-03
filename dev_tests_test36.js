@@ -184,7 +184,7 @@ const ok=(c,m)=>console.log((c?'OK  ':'NG  ')+m);
   (async()=>{ const c1=await run('a',S,'クトゥルフの呼び声',[]), c2=await run('a',S,'クトゥルフの呼び声 後編',[]), c3=await run(null,[{id:'b',title:'同名'}],'同名',[true]), c4=await run('a',[{id:'a',title:'X'},{id:'b',title:'Y'}],'Y',[false]);
     console.log((c1.n===0&&c2.n===0&&Object.keys(c2.r).length===0?'OK  ':'NG  ')+'完全一致も部分一致も確認ダイアログなし（部分一致は自動で別シナリオ）');
     console.log((c3.n===1&&!c3.r.forceNew&&c4.n===1&&c4.r.forceNew===true?'OK  ':'NG  ')+'別シナリオに同名（完全一致）があるときだけ、上書きか別保存かを確認'); })();
-  const post=app.slice(app.indexOf('async function handlePostInner'));
+  const post=app.slice(app.indexOf('async function validateBeforePost'));
   console.log((!/statusMsg\.style\.display = "block"/.test(post)&&!/status-msg (success|error)/.test(post)&&(post.match(/appAlert\(/g)||[]).length>=2&&!/ignoreCurrent|titlesRelated/.test(app)?'OK  ':'NG  ')+'投稿結果は下のバーを使わずポップアップのみ');
 }
 
